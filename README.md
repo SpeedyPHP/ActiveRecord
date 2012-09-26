@@ -5,7 +5,7 @@ Version 1.0
 by Kien La and Jacques Fuentes
 
 by Zachary Quintana
-Added migrations and collections for return arrays
+Added migrations and collections for return arrays. This version is built for SpeedyPHP framework.
 
 <http://www.phpactiverecord.org/>
 
