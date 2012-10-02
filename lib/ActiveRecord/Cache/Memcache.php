@@ -1,5 +1,5 @@
 <?php
-namespace ActiveRecord;
+namespace ActiveRecord\Cache;
 
 
 use ActiveRecord\Exceptions\CacheException;
