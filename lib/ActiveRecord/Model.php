@@ -1489,7 +1489,7 @@ class Model extends Object implements \ArrayAccess
 		$where	= array_shift($args);
 		$options= (array) @array_shift($args);
 		
-		return call_user_func_array('static::all', array_merge(['conditions' => $where], $options));
+		return call_user_func('static::all', array_merge(['conditions' => $where], $options));
 	}
 
 	/**
