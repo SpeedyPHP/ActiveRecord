@@ -303,7 +303,7 @@ class Config extends Singleton
 	public function set_cache()
 	{
 		//Cache::initialize($url,$options);
-		call_user_func_array('Cache::initialize', func_get_args());
+		call_user_func_array('\ActiveRecord\Cache::initialize', func_get_args());
 	}
 };
 ?>
