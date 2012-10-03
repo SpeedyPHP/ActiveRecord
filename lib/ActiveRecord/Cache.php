@@ -57,6 +57,10 @@ class Cache
 			static::$adapter = new ActiveRecord\Cache\Memcache($url, $args);
 		} 
 
+		
+		if (isset($args[0]) && is_array($args[0])) $options = array_shift($args);
+		else $options = [];
+		
 		static::$options = array_merge(array('expire' => 30, 'namespace' => ''),$options);
 	}
 
