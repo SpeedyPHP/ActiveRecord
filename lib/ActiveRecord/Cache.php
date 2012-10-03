@@ -41,18 +41,21 @@ class Cache
 	 * @param string $url URL to your cache server
 	 * @param array $options Specify additional options
 	 */
-	public static function initialize($url, $options=array())
+	public static function initialize()
 	{
-		if ($url)
-		{
+ 		$args	= func_get_args();
+ 		if (empty($args)) {
+ 			static::$adapter = null;
+ 			return;
+ 		}
+ 		
+		$class	= array_shift($args);
+		if (class_exists($class)) {
+			static::$adapter = new $class($args);
+		} elseif ($url) {
 			$url = parse_url($url);
-			$file = ucwords(Inflector::instance()->camelize($url['scheme']));
-			$class = "ActiveRecord\\Cache\\$file";
-			//require_once __DIR__ . "/cache/$file.php";
-			static::$adapter = new $class($url);
-		}
-		else
-			static::$adapter = null;
+			static::$adapter = new ActiveRecord\Cache\Memcache($url, $args);
+		} 
 
 		static::$options = array_merge(array('expire' => 30, 'namespace' => ''),$options);
 	}
