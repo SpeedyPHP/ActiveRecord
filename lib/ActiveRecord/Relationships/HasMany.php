@@ -111,8 +111,6 @@ class HasMany extends Relationship
 
 	public function load(Model $model)
 	{
-		$this->setup($model);
-
 		$class_name = $this->class_name;
 		$this->set_keys(get_class($model));
 
