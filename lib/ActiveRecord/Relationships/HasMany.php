@@ -152,7 +152,7 @@ class HasMany extends Relationship
 
 		$options = $this->unset_non_finder_options($this->options);
 		$options['conditions'] = $conditions;
-		return $class_name::find($this->poly_relationship ? 'all' : 'first',$options);
+		return $class_name::find(/*$this->poly_relationship ? 'all' : 'first'*/'all',$options);
 	}
 
 	private function inject_foreign_key_for_new_association(Model $model, &$attributes)
