@@ -1633,7 +1633,7 @@ class Model extends Object implements \ArrayAccess
 		$options['mapped_names'] = static::$alias_attribute;
 		$list = static::table()->find($options);
 
-		return $single ? ((count($list) > 0) ? $list : null) : $list[0];
+		return $single ? ((count($list) > 0) ? $list[0] : null) : $list;
 	}
 
 	/**
