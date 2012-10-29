@@ -1,5 +1,5 @@
 {
-	"name" : "SpeedyPHP/ActiveRecord",
+	"name" : "speedy-php/active-record",
 	"description" : "ActiveRecord package being used with SpeedyPHP",
 	"keywords" : ["SpeedyPHP", "ActiveRecord"],	
 	"license": "MIT",
