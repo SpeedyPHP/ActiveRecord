@@ -132,6 +132,19 @@ abstract class Migration {
 		throw new MigrationException('Unknown error occured while creating table ' . $name);
 	}
 	
+	public function drop_table($name, $closure = null) 
+	{
+		if ($this->direction() === self::UP) {
+			$this->query($this->build_drop_table($name));
+			$this->pushLog("Dropped table $name {$this->connection->get_execution_time()} ms");
+		} elseif ($this->direction() === self::DOWN && isset($closure)) {
+			$this->query($this->build_create_table($name, $closure));
+			$this->pushLog("Recreated table $name {$this->connection->get_execution_time()} ms");
+		}
+		
+		return;
+	}
+	
 	public function add_column($table_name, $column, $type, $length = null, $null = true)
 	{
 		if ($this->direction() === self::UP) {
@@ -166,7 +179,7 @@ abstract class Migration {
 	}
 	
 	public function runUp() {
-		$this->set_direction(self::UP)->migrate();
+		$this->set_direction(self::UP)->change();
 		$this->up();
 		
 		$record	= new SchemaMigration(array('version' => $this->version()));
