@@ -438,16 +438,21 @@ class Table
 
 	private function set_table_name()
 	{
-		if (($table = $this->class->getStaticPropertyValue('table',null)) || ($table = $this->class->getStaticPropertyValue('table_name',null)))
+		if (($table = $this->class->getStaticPropertyValue('table',null)) 
+				|| ($table = $this->class->getStaticPropertyValue('table_name',null)))
 			$this->table = $table;
 		else
 		{
+			$prefix = $this->class->getStaticPropertyValue('table_prefix', null);
 			// infer table name from the class name
 			$this->table = Inflector::instance()->tableize($this->class->getName());
 
 			// strip namespaces from the table name if any
 			$parts = explode('\\',$this->table);
 			$this->table = $parts[count($parts)-1];
+			
+			if (isset($prefix) && strlen($prefix) > 0) 
+				$this->table	= $prefix . "_" . $this->table;
 		}
 
 		if(($db = $this->class->getStaticPropertyValue('db',null)) || ($db = $this->class->getStaticPropertyValue('db_name',null)))
