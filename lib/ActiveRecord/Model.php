@@ -145,6 +145,13 @@ class Model extends Object implements \ArrayAccess
 	 * @var string
 	 */
 	static $table_name;
+	
+	/**
+	 * Set the table prefix of the model's table
+	 * 
+	 * @var string
+	 */
+	static $table_prefix;
 
 	/**
 	 * Set this to override the default primary key name if different from default name of "id".
