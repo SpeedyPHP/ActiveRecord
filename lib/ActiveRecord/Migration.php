@@ -225,7 +225,7 @@ abstract class Migration {
 		$this->sql	= "CREATE TABLE $name (";
 		$closure();
 		if (!$this->id) {
-			$this->sql	.=	$this->connection->column('id', 'primary_key') . ', ';
+			$this->sql	.=	'id ' . $this->connection->column('primary_key') . ', ';
 		}
 		
 		if (empty($this->columns))

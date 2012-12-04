@@ -568,14 +568,13 @@ abstract class Connection
 	public function column($name, $type = null, $length = null, $null = true)
 	{
 		$native_types	= $this->native_database_types();
+		if ($name == self::PRIMARY_KEY)
+			return $native_types[$name];
 		
 		if (!isset($native_types[$type]))
 			throw new ActiveRecordException("Column type not known for $name $type");
 		
 		$typeDefaults	= $native_types[$type];
-		if ($name == self::PRIMARY_KEY)
-			return $native_types[$name];
-		
 		$sql	= "$name {$typeDefaults['name']}";
 		
 		if (!$length && isset($typeDefaults['length'])) {
