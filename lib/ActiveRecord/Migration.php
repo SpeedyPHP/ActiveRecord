@@ -50,7 +50,7 @@ abstract class Migration {
 			$this->direction = self::UP;
 	}
 	
-	abstract public function change();
+	public function change() {}
 	
 	/**
 	 * Getter for record
