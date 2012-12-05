@@ -178,13 +178,15 @@ abstract class Migration {
 		return;
 	}
 	
-	public function runUp() {
+	public function runUp($logMigration = true) {
 		$this->set_direction(self::UP)->change();
 		$this->up();
 		
-		$record	= new SchemaMigration(array('version' => $this->version()));
-		$record->save();
-		$this->set_record($record);
+		if ($logMigration) {
+			$record	= new SchemaMigration(array('version' => $this->version()));
+			$record->save();
+			$this->set_record($record);
+		}
 		
 		return;
 	}
