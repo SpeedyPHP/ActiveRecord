@@ -27,7 +27,7 @@ class Collection extends \ArrayObject {
 	
 	public function prepend($value){
 		$tmp= $this->getArrayCopy();
-		$tmp= array($value) + $tmp;
+		array_unshift($tmp, $value);
 		$this->exchangeArray($tmp);
 		return $this;
 	}
