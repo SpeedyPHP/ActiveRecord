@@ -25,5 +25,12 @@ class Collection extends \ArrayIterator {
 		return $this->count();
 	}
 	
+	public function prepend($value){
+		$tmp= $this->getArrayCopy();
+		$tmp= array($value) + $tmp;
+		$this->exchangeArray($tmp);
+		return $this;
+	}
+	
 }
 ?>
