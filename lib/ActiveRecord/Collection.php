@@ -1,7 +1,7 @@
 <?php 
 namespace ActiveRecord;
 
-class Collection extends \ArrayIterator {
+class Collection extends \ArrayObject {
 	
 	public function each($closure) {
 		foreach ($this as &$value) {
