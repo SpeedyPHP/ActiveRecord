@@ -224,7 +224,7 @@ abstract class Migration {
 	
 	private function build_create_table($name, $closure) 
 	{
-		$this->sql	= "CREATE TABLE $name (";
+		$this->sql	= "CREATE TABLE IF NOT EXISTS $name (";
 		$closure();
 		if (!$this->id) {
 			$this->sql	.=	'id ' . $this->connection->column('primary_key') . ', ';
