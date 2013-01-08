@@ -1778,6 +1778,41 @@ class Model extends Object implements \ArrayAccess
 		}
 		return $options;
 	}
+	
+	/**
+	 * Magic method for converting the class to a string
+	 * 
+	 * @return string class name
+	 */
+	public function __toString()
+	{
+		return $this->to_string();
+	}
+	
+	/**
+	 * Convenience method for getting string
+	 * 
+	 * @return string class name
+	 */
+	public function to_s() {
+		return $this->to_string();
+	}
+	
+	/**
+	 * For a string representation of the class name
+	 * 
+	 * @return string class name
+	 */
+	public function to_string()
+	{
+		$class	= get_class($this);
+		if (has_namespace($class)) {
+			$aClass = explode('\\', $class);
+			$class	= array_pop($aClass);
+		}
+		
+		return Utils::underscore($class);
+	}
 
 	/**
 	 * Returns a JSON representation of this model.

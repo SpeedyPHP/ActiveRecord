@@ -366,5 +366,25 @@ class Utils
 	{
 		return preg_replace("/$char+/",$char,$string);
 	}
+	
+	/**
+	 * Converts a word "into_it_s_underscored_version"
+	 *
+	 * Convert any "CamelCased" or "ordinary Word" into an
+	 * "underscored_word".
+	 *
+	 * This can be really useful for creating friendly URLs.
+	 *
+	 * @access public
+	 * @static
+	 * @param    string    $word    Word to underscore
+	 * @return string Underscored word
+	 */
+	public static function underscore($word)
+	{
+		return  strtolower(preg_replace('/[^A-Z^a-z^0-9]+/','_',
+						preg_replace('/([a-z\d])([A-Z])/','\1_\2',
+						preg_replace('/([A-Z]+)([A-Z][a-z])/','\1_\2',$word))));
+	}
 };
 ?>
