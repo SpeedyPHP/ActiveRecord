@@ -297,6 +297,10 @@ abstract class Migration {
 		$this->column($name, 'boolean', $length, $null);
 	}
 	
+	public function double($name, $length = null, $null = true) {
+		$this->column($name, 'double', $length, $null);
+	}
+	
 	public function timestamps() {
 		$this->timestamp('created_at');
 		$this->timestamp('updated_at');

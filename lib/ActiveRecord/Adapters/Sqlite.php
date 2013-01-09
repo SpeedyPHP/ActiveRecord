@@ -105,7 +105,8 @@ class Sqlite extends Connection
 			'time' => array('name' => 'time'),
 			'date' => array('name' => 'date'),
 			'binary' => array('name' => 'blob'),
-			'boolean' => array('name' => 'boolean')
+			'boolean' => array('name' => 'boolean'),
+			'double' => array('name' => 'double', 'length' => '8,2')
 		);
 	}
 

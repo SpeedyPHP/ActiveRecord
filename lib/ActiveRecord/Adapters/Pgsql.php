@@ -133,7 +133,8 @@ SQL;
 			'time' => array('name' => 'time'),
 			'date' => array('name' => 'date'),
 			'binary' => array('name' => 'binary'),
-			'boolean' => array('name' => 'boolean')
+			'boolean' => array('name' => 'boolean'),
+			'double' => array('name' => 'double', 'length' => '8,2')
 		);
 	}
 

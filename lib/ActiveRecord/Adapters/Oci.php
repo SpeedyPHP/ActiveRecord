@@ -144,7 +144,8 @@ class Oci extends Connection
 			'time' => array('name' => 'DATE'),
 			'date' => array('name' => 'DATE'),
 			'binary' => array('name' => 'BLOB'),
-			'boolean' => array('name' => 'NUMBER', 'length' => 1)
+			'boolean' => array('name' => 'NUMBER', 'length' => 1),
+			'double' => array('name' => 'FLOAT', 'length' => '8,2')
 		);
 	}
 }

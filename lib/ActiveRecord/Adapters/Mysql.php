@@ -96,7 +96,8 @@ class Mysql extends Connection
 			'time' => array('name' => 'time'),
 			'date' => array('name' => 'date'),
 			'binary' => array('name' => 'blob'),
-			'boolean' => array('name' => 'tinyint', 'length' => 1)
+			'boolean' => array('name' => 'tinyint', 'length' => 1),
+			'double' => array('name' => 'double', 'length' => '8,2')
 		);
 	}
 
