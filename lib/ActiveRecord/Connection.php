@@ -565,7 +565,7 @@ abstract class Connection
 	 * @return string
 	 * @throws ActiveRecordException
 	 */
-	public function column($name, $type = null, $length = null, $null = true)
+	public function column($name, $type = null, $options = [])
 	{
 		$native_types	= $this->native_database_types();
 		if ($name == self::PRIMARY_KEY)
@@ -576,6 +576,7 @@ abstract class Connection
 		
 		$typeDefaults	= $native_types[$type];
 		$sql	= "$name {$typeDefaults['name']}";
+		extract($options);
 		
 		if (!$length && isset($typeDefaults['length'])) {
 			$sql	.= '(' . $typeDefaults['length'] . ')';
@@ -587,6 +588,10 @@ abstract class Connection
 			$sql	.= ' NULL';
 		} else {
 			$sql	.= ' NOT NULL';
+		}
+
+		if ($default) {
+			$sql .= "DEFAULT $default";
 		}
 		
 		return $sql;

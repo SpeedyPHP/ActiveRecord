@@ -261,48 +261,51 @@ abstract class Migration {
 		$this->columns .= call_user_func_array(array($this->connection, 'column'), $args);
 	}
 	
-	public function string($name, $length = null, $null = true) {
-		$this->column($name, 'string', $length, $null);
+	public function string($name, $options = []) {
+		$this->column($name, 'string', $options);
 	}
 	
-	public function text($name, $length = null, $null = true) {
-		$this->column($name, 'text', $length, $null);
+	public function text($name, $options = []) {
+		$this->column($name, 'text', $options);
 	}
 	
-	public function integer($name, $length = null, $null = true) {
-		$this->column($name, 'integer', $length, $null);
+	public function integer($name, $options = []) {
+		$this->column($name, 'integer', $options);
 	}
 	
-	public function float($name, $length = null, $null = true) {
-		$this->column($name, 'float', $length, $null);
+	public function float($name, $options = []) {
+		$this->column($name, 'float', $options);
 	}
 	
-	public function datetime($name, $length = null, $null = true) {
-		$this->column($name, 'datetime', $length, $null);
+	public function datetime($name, $options = []) {
+		$this->column($name, 'datetime', $options);
 	}
 	
-	public function timestamp($name, $length = null, $null = true) {
-		$this->column($name, 'timestamp', $length, $null);
+	public function timestamp($name, $options = []) {
+		$this->column($name, 'timestamp', $options);
 	}
 	
-	public function time($name, $length = null, $null = true) {
-		$this->column($name, 'time', $length, $null);
+	public function time($name, $options = []) {
+		$this->column($name, 'time', $options);
 	}
 	
-	public function date($name, $length = null, $null = true) {
-		$this->column($name, 'date', $length, $null);
+	public function date($name, $options = []) {
+		$this->column($name, 'date', $options);
 	}
 	
-	public function binary($name, $length = null, $null = true) {
-		$this->column($name, 'binary', $length, $null);
+	public function binary($name, $options = []) {
+		$this->column($name, 'binary', $options);
 	}
 	
-	public function boolean($name, $length = null, $null = true) {
-		$this->column($name, 'boolean', $length, $null);
+	public function boolean($name, $options = []) {
+		$options = array_merge([
+				'default' => 0
+			], $options);
+		$this->column($name, 'boolean', $options);
 	}
 	
-	public function double($name, $length = null, $null = true) {
-		$this->column($name, 'double', $length, $null);
+	public function double($name, $options = []) {
+		$this->column($name, 'double', $options);
 	}
 	
 	public function timestamps() {
