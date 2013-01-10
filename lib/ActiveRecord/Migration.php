@@ -236,6 +236,7 @@ abstract class Migration {
 		$this->sql	.= $this->columns . ')';
 		$sql = $this->sql;
 		unset($this->sql);
+		unset($this->columns);
 
 		return $sql;
 	}
