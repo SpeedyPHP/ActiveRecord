@@ -591,7 +591,7 @@ abstract class Connection
 		}
 
 		if (isset($default)) {
-			$sql .= "DEFAULT $default";
+			$sql .= " DEFAULT $default";
 		}
 		
 		return $sql;
