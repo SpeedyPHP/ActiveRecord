@@ -578,19 +578,19 @@ abstract class Connection
 		$sql	= "$name {$typeDefaults['name']}";
 		extract($options);
 		
-		if (!$length && isset($typeDefaults['length'])) {
+		if (isset($length) && isset($typeDefaults['length'])) {
 			$sql	.= '(' . $typeDefaults['length'] . ')';
 		} elseif ($length) {
 			$sql	.= '(' . $length . ')';
 		}
 		
-		if ($null) {
+		if (isset($null)) {
 			$sql	.= ' NULL';
 		} else {
 			$sql	.= ' NOT NULL';
 		}
 
-		if ($default) {
+		if (isset($default)) {
 			$sql .= "DEFAULT $default";
 		}
 		
