@@ -234,13 +234,16 @@ abstract class Migration {
 			throw new MigrationException('No column definition in migration');
 		
 		$this->sql	.= $this->columns . ')';
-		return $this->sql;
+		$sql = $this->sql;
+		unset($this->sql);
+
+		return $sql;
 	}
 	
 	private function build_drop_table($name) 
 	{
-		$this->sql	= "DROP TABLE " . $name;
-		return $this->sql;
+		$sql	= "DROP TABLE " . $name;
+		return $sql;
 	}
 	
 	private function column() {
