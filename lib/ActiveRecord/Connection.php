@@ -578,9 +578,9 @@ abstract class Connection
 		$sql	= "$name {$typeDefaults['name']}";
 		extract($options);
 		
-		if (isset($length) && isset($typeDefaults['length'])) {
+		if (!isset($length) && isset($typeDefaults['length'])) {
 			$sql	.= '(' . $typeDefaults['length'] . ')';
-		} elseif ($length) {
+		} elseif (isset($length)) {
 			$sql	.= '(' . $length . ')';
 		}
 		
