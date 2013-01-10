@@ -575,7 +575,7 @@ abstract class Connection
 			throw new ActiveRecordException("Column type not known for $name $type");
 		
 		$typeDefaults	= $native_types[$type];
-		$sql	= "`$name` {$typeDefaults['name']}";
+		$sql	= "$name {$typeDefaults['name']}";
 		
 		if (!$length && isset($typeDefaults['length'])) {
 			$sql	.= '(' . $typeDefaults['length'] . ')';
