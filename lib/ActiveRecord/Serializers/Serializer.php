@@ -92,7 +92,7 @@ abstract class Serializer
 	 * @param array &$options Options for serialization
 	 * @return Serialization
 	 */
-	public function __construct(Model $model, &$options)
+	public function __construct(\ActiveRecord\Model $model, &$options)
 	{
 		$this->model = $model;
 		$this->options = $options;
