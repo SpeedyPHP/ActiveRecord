@@ -31,6 +31,33 @@ class Collection extends \ArrayObject {
 		$this->exchangeArray($tmp);
 		return $this;
 	}
+
+	/**
+	 * Convert current collection to array
+	 * 
+	 * @return array
+	 */
+	public function to_array() {
+		$array = [];
+		foreach ($this as $model) {
+			if (!$model instanceof Model) {
+				continue;
+			}
+
+			$array[] = $model->to_array();
+		}
+
+		return $array;
+	}
+
+	/**
+	 * Alias for to_array
+	 * 
+	 * @return array
+	 */
+	public function to_a() {
+		return $this->to_array();
+	}
 	
 }
 ?>
