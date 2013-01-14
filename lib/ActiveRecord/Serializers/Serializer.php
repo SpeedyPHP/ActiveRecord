@@ -39,7 +39,7 @@ namespace ActiveRecord\Serializers;
  * @package ActiveRecord
  * @link http://www.phpactiverecord.org/guides/utilities#topic-serialization
  */
-abstract class Serialization
+abstract class Serializer
 {
 	protected $model;
 	protected $options;
