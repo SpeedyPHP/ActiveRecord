@@ -10,11 +10,34 @@ use ActiveRecord\Exceptions\MigrationException;
 
 abstract class Migration {
 	
+	/**
+	 * Default name for id
+	 * @const string
+	 */
 	const ID	= 'id';
+
+	/**
+	 * Migration up flag
+	 * @const int
+	 */
 	const UP	= 1;
+
+	/**
+	 * Migration down flag
+	 * @const int
+	 */
 	const DOWN	= 2;
 	
+	/**
+	 * Current AR Connection
+	 * @var ActiveRecord\Connection
+	 */
 	private $connection;
+
+	/**
+	 * Current sql string
+	 * @var string
+	 */
 	private $sql;
 	
 	/**
@@ -22,12 +45,50 @@ abstract class Migration {
 	 * @var string
 	 */
 	private $columns;
+
+	/**
+	 * Flag for determining where an id column is needed
+	 * @var boolean
+	 */
 	private $id = false;
+
+	/**
+	 * Version string of current migration
+	 * @var string
+	 */
 	private $version;
+
+	/**
+	 * SchemaMigration record for this migration
+	 * @var ActiveRecord\SchemaMigration
+	 */
 	private $record;
+
+	/**
+	 * Flag to determine if migration has already been run
+	 * @var boolean
+	 */
 	private $migrated = null;
+
+	/**
+	 * Direction of the migration
+	 * @var int
+	 */
 	private $direction	= null;
+
+	/**
+	 * Log of statements executed
+	 * @var array
+	 */
 	private $log	= array();
+
+	/**
+	 * Column build defaults
+	 * @var array
+	 */
+	private $columnDefaults = [
+		'null' => true
+	];
 	
 	
 	
@@ -204,6 +265,10 @@ abstract class Migration {
 		return;
 	}
 	
+	/**
+	 * Getter for direction of migration
+	 * @return 
+	 */
 	public function direction() 
 	{
 		if (!$this->direction) 
@@ -211,17 +276,29 @@ abstract class Migration {
 		return $this->direction;
 	}
 	
+	/**
+	 * Build alter table drop column sql
+	 * @return string sql
+	 */
 	private function build_drop_column($table_name, $column)
 	{
 		return "ALTER TABLE $table_name DROP COLUMN $column";
 	}
 	
+	/**
+	 * Build alter table add column sql
+	 * @return string sql
+	 */
 	private function build_add_column($table_name, $column, $type, $length = null, $null = true) {
 		$this->column($column, $type, $length, $null);
 		
 		return "ALTER TABLE $table_name ADD COLUMN {$this->columns}";
 	}
 	
+	/**
+	 * Build create table sql
+	 * @return string sql 
+	 */
 	private function build_create_table($name, $closure) 
 	{
 		$this->sql	= "CREATE TABLE IF NOT EXISTS $name (";
@@ -234,15 +311,27 @@ abstract class Migration {
 			throw new MigrationException('No column definition in migration');
 		
 		$this->sql	.= $this->columns . ')';
-		return $this->sql;
+		$sql = $this->sql;
+		unset($this->sql);
+		unset($this->columns);
+
+		return $sql;
 	}
 	
+	/**
+	 * Build drop table sql
+	 * @return string sql
+	 */
 	private function build_drop_table($name) 
 	{
-		$this->sql	= "DROP TABLE " . $name;
-		return $this->sql;
+		$sql	= "DROP TABLE " . $name;
+		return $sql;
 	}
 	
+	/**
+	 * Create column sql builder for create table
+	 * @return void
+	 */
 	private function column() {
 		if (empty($this->columns)) {
 			$this->columns	= '';
@@ -257,50 +346,111 @@ abstract class Migration {
 		$this->columns .= call_user_func_array(array($this->connection, 'column'), $args);
 	}
 	
-	public function string($name, $length = null, $null = true) {
-		$this->column($name, 'string', $length, $null);
+	/**
+	 * Create string in create table
+	 * @return void
+	 */
+	public function string($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'string', $options);
 	}
 	
-	public function text($name, $length = null, $null = true) {
-		$this->column($name, 'text', $length, $null);
+	/**
+	 * Create text in create table
+	 * @return void
+	 */
+	public function text($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'text', $options);
 	}
 	
-	public function integer($name, $length = null, $null = true) {
-		$this->column($name, 'integer', $length, $null);
+	/**
+	 * Create integer in create table
+	 * @return void
+	 */
+	public function integer($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'integer', $options);
 	}
 	
-	public function float($name, $length = null, $null = true) {
-		$this->column($name, 'float', $length, $null);
+	/**
+	 * Create float in create table
+	 * @return void
+	 */
+	public function float($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'float', $options);
 	}
 	
-	public function datetime($name, $length = null, $null = true) {
-		$this->column($name, 'datetime', $length, $null);
+	/**
+	 * Create datetime in create table
+	 * @return void
+	 */
+	public function datetime($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'datetime', $options);
 	}
 	
-	public function timestamp($name, $length = null, $null = true) {
-		$this->column($name, 'timestamp', $length, $null);
+	/**
+	 * Create timestamp in create table
+	 * @return void
+	 */
+	public function timestamp($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'timestamp', $options);
 	}
 	
-	public function time($name, $length = null, $null = true) {
-		$this->column($name, 'time', $length, $null);
+	/**
+	 * Create time in create table
+	 * @return void
+	 */
+	public function time($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'time', $options);
 	}
 	
-	public function date($name, $length = null, $null = true) {
-		$this->column($name, 'date', $length, $null);
+	/**
+	 * Create date in create table
+	 * @return void
+	 */
+	public function date($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'date', $options);
 	}
 	
-	public function binary($name, $length = null, $null = true) {
-		$this->column($name, 'binary', $length, $null);
+	/**
+	 * Create binary in create table
+	 * @return void
+	 */
+	public function binary($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'binary', $options);
 	}
 	
-	public function boolean($name, $length = null, $null = true) {
-		$this->column($name, 'boolean', $length, $null);
+	/**
+	 * Create boolean in create table
+	 * @return void
+	 */
+	public function boolean($name, $options = []) {
+		$options = array_merge($this->columnDefaults, [
+				'default' => 0
+			], $options);
+		$this->column($name, 'boolean', $options);
 	}
 	
-	public function double($name, $length = null, $null = true) {
-		$this->column($name, 'double', $length, $null);
+	/**
+	 * Create double in create table
+	 * @return void
+	 */
+	public function double($name, $options = []) {
+		$options = array_merge($this->columnDefaults, $options);
+		$this->column($name, 'double', $options);
 	}
 	
+	/**
+	 * Create timestamps for table
+	 * @return void
+	 */
 	public function timestamps() {
 		$this->timestamp('created_at');
 		$this->timestamp('updated_at');
