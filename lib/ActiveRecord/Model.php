@@ -1894,7 +1894,6 @@ class Model extends Object implements \ArrayAccess
 	 */
 	private function serialize($type, $options)
 	{
-		require_once 'Serialization.php';
 		$class = "ActiveRecord\\Serializers\\{$type}Serializer";
 		$serializer = new $class($this, $options);
 		return $serializer->to_s();
