@@ -289,9 +289,13 @@ abstract class Relationship implements InterfaceRelationship
 	 */
 	protected function set_inferred_class_name($model = null)
 	{
-		$ns 	= ($model && !isset($this->options['namespace'])) ? get_namespace($model) : null;
+		if (isset($this->options['namespace']))
+			$ns 	= $this->options['namespace'];
+		elseif (!isset($this->options['namespace']) && $model)
+			$ns 	= '\\' . get_namespace($model);
+
 		$class	= $this->get_inferred_class_name();
-		if ($ns) $class = '\\' . $ns . '\\' . $class;
+		if (!empty($ns)) $class = $ns . '\\' . $class;
 		
 		$this->set_class_name($class);
 	}
