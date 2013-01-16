@@ -315,7 +315,7 @@ abstract class Relationship implements InterfaceRelationship
 			}
 		}
 
-		if (!$reflection->isSubClassOf('\ActiveRecord\\Model'))
+		if (!$reflection->isSubClassOf('\\ActiveRecord\\Model'))
 			throw new RelationshipException("'$class_name' must extend from ActiveRecord\\Model");
 
 		$this->class_name = $class_name;
