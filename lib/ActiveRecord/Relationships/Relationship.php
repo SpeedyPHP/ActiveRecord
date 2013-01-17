@@ -105,7 +105,7 @@ abstract class Relationship implements InterfaceRelationship
 			$this->foreign_key = is_array($this->options['foreign_key']) ? $this->options['foreign_key'] : array($this->options['foreign_key']);
 	}
 
-	protected function get_table()
+	public function get_table()
 	{
 		return Table::load($this->class_name);
 	}
@@ -403,7 +403,7 @@ abstract class Relationship implements InterfaceRelationship
 		if (!is_null($alias))
 		{
 			$aliased_join_table_name = $alias = $this->get_table()->conn->quote_name($alias);
-			$alias .= ' ';
+			$alias = " AS $alias ";
 		}
 		else
 			$aliased_join_table_name = $join_table_name;

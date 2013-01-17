@@ -126,27 +126,25 @@ class Table
 
 			if (stripos($value,'JOIN ') === false)
 			{
-				if (array_key_exists($value, $this->relationships))
+				if (!array_key_exists($value, $this->relationships))
 				{
-					$rel = $this->get_relationship($value);
-
-					// if there is more than 1 join for a given table we need to alias the table names
-					$class = $rel->class_name();
-					if (array_key_exists($class, $existing_tables))
-					{
-						$alias = $value;
-						$existing_tables[$class]++;
-					}
-					else
-					{
-						$existing_tables[$class] = true;
-						$alias = null;
-					}
-
-					$ret .= $rel->construct_inner_join_sql($this, false, $alias);
-				}
-				else
 					throw new RelationshipException("Relationship named $value has not been declared for class: {$this->class->getName()}");
+				}	
+
+				$rel = $this->get_relationship($value);
+
+				// if there is more than 1 join for a given table we need to alias the table names
+				$class = $rel->class_name();
+				$alias = $value;
+				/*if (array_key_exists($class, $existing_tables)) {
+					$alias = $value;
+					$existing_tables[$class]++;
+				} else {
+					$existing_tables[$class] = true;
+					$alias = null;
+				}*/
+
+				$ret .= $rel->construct_inner_join_sql($this, false, $alias);
 			}
 			else
 				$ret .= $value;
@@ -154,6 +152,34 @@ class Table
 			$space = ' ';
 		}
 		return $ret;
+	}
+
+	public function select_for_joins($joins) {
+		if (!is_array($joins)) {
+			return '';
+		}
+
+		$sep 	= ', ';
+		$select = '';
+		foreach ($joins as $join) {
+			if (stripos($join,'JOIN ') !== false) {
+				continue;
+			}
+
+			if (!array_key_exists($join, $this->relationships)) {
+				continue;
+			}
+		
+			$alias = $this->conn->quote_name($join);
+			$rel = $this->get_relationship($join);
+			
+			foreach($rel->get_table()->columns as $column) {
+				$select_name = $this->conn->quote_name("{$join}.{$column->name}");
+				$select .= "$sep {$alias}.{$column->name} AS $select_name";
+			}
+		}
+
+		return $select;
 	}
 
 	public function options_to_sql($options)
@@ -166,8 +192,10 @@ class Table
 			$sql->joins($this->create_joins($options['joins']));
 
 			// by default, an inner join will not fetch the fields from the joined table
-			if (!array_key_exists('select', $options))
-				$options['select'] = $this->get_fully_qualified_table_name() . '.*';
+			if (!array_key_exists('select', $options)) {
+				$options['select'] 	= $this->get_fully_qualified_table_name() . '.*';
+				$options['select']	.= $this->select_for_joins($options['joins']);
+			}
 		}
 
 		if (array_key_exists('select',$options))
@@ -214,11 +242,42 @@ class Table
 		$sql = $this->options_to_sql($options);
 		$readonly = (array_key_exists('readonly',$options) && $options['readonly']) ? true : false;
 		$eager_load = array_key_exists('include',$options) ? $options['include'] : null;
+		$joins 	= array_key_exists('joins', $options) ? $options['joins'] : null;
 
-		return $this->find_by_sql($sql->to_s(),$sql->get_where_values(), $readonly, $eager_load);
+		return $this->find_by_sql($sql->to_s(),$sql->get_where_values(), $readonly, $eager_load, $joins);
 	}
 
-	public function find_by_sql($sql, $values=null, $readonly=false, $includes=null)
+	public function process_join_results(&$row, $joins) {
+		if (!is_array($joins)) {
+			return;
+		}
+
+		foreach ($joins as $join) {
+			if (!array_key_exists($join, $this->relationships)) {
+				continue;
+			}
+
+			$rel = $this->get_relationship($join);
+			$data= [];
+			foreach($rel->get_table()->columns as $column) {
+				$key 	= "{$join}.{$column->name}";
+				if (!isset($row[$key])) {
+					continue;
+				}
+
+				$data[$column->name] = $row[$key];
+				unset($row[$key]);
+			}
+
+			if (empty($data)) {
+				continue;
+			}
+
+			$row[$join] = new $rel->class_name($data);
+		}
+	}
+
+	public function find_by_sql($sql, $values=null, $readonly=false, $includes=null, $joins = null)
 	{
 		$this->last_sql = $sql;
 
@@ -226,8 +285,12 @@ class Table
 		$list = $attrs = array();
 		$sth = $this->conn->query($sql,$this->process_data($values));
 
-		while (($row = $sth->fetch()))
+		while (($row = $sth->fetch(\PDO::FETCH_ASSOC)))
 		{
+			if ($joins) {
+				$this->process_join_results($row, $joins);
+			}
+
 			$model = new $this->class->name($row,false,true,false);
 
 			if ($readonly)
