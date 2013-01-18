@@ -69,6 +69,8 @@ class HasMany extends Relationship
 
 	protected $primary_key;
 
+	protected $poly_relationship = true;
+
 	private $has_one = false;
 	private $through;
 
