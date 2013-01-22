@@ -77,8 +77,10 @@ class Cache
 		if (!static::$adapter)
 			return $closure();
 
-		if (!($value = static::$adapter->read($key)))
-			static::$adapter->write($key,($value = $closure()),static::$options['expire']);
+		if (!($value = static::$adapter->read($key))) {
+			$clean_name = str_replace('`', '', $key);
+			static::$adapter->write($clean_name,($value = $closure()),static::$options['expire']);
+		}
 
 		return $value;
 	}
