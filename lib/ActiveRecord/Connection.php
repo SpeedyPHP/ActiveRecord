@@ -329,9 +329,11 @@ abstract class Connection
 		}
 		$end	= microtime(true);
 		$this->set_execution_time(round($end - $start, 4));
-		$this->logger
+		if ($this->logger) {
+			$this->logger
 				->push_execution_time($this->get_execution_time())
 				->push_number_rows($sth->rowCount());
+		}
 		
 		return $sth;
 	}
