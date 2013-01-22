@@ -438,8 +438,9 @@ class Table
 		$quote_name = !($this->conn instanceof PgsqlAdapter);
 
 		$table_name = $this->get_fully_qualified_table_name($quote_name);
+		$clean_name	= str_replace('`', '', $table_name);
 		$conn = $this->conn;
-		$this->columns = Cache::get("get_meta_data-$table_name", function() use ($conn, $table_name) { return $conn->columns($table_name); });
+		$this->columns = Cache::get("get_meta_data-$clean_name", function() use ($conn, $table_name) { return $conn->columns($table_name); });
 	}
 
 	/**
