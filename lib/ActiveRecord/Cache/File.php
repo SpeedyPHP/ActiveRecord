@@ -14,7 +14,7 @@ class File implements CacheInterface {
 	
 	
 	public function __construct() {
-		$this->addPath('default', TMP_PATH . DS . 'cache');
+		//$this->addPath('default', TMP_PATH . DS . 'cache');
 	}
 	
 	/**
@@ -22,18 +22,16 @@ class File implements CacheInterface {
 	 * @param string $name
 	 * @param string $setting
 	 */
-	public function clear($name = null, $path = null) {
-		if ($path == null) $path = self::PathDefault;
-		
+	public function clear($name = null) {
 		if ($name) {
-			$filepath = $this->path($path) . DS . $name;
+			$filepath = $this->fullPath($name);
 			if (file_exists($filepath)) {
 				@unlink($filepath);
 			}
 			
 			return;
 		} else {
-			$this->flush($path);	
+			$this->flush();	
 		}
 	}
 	
@@ -41,8 +39,8 @@ class File implements CacheInterface {
 	 * Clear entire cache for path
 	 * @param string $path
 	 */
-	public function flush($path = null) {
-		$path = $this->path($path);
+	public function flush() {
+		$path = $this->path();
 		foreach (glob($path . DS . "*") as $filename) {
 			@unlink($filename);
 		}
@@ -51,35 +49,29 @@ class File implements CacheInterface {
 	/**
 	 * Read from cache
 	 * @param string $name
-	 * @param string $setting (optional)
 	 * @return mixed
 	 */
-	public function read($name, $setting = null) {
-		if ($setting == null) $setting = self::PathDefault;
-			
-		$data	= @file_get_contents($this->fullPath($name, $setting));
-		if (!$data) return false;
-		
-		return unserialize($data);
+	public function read($name) {
+		$data	= @file_get_contents($this->fullPath($name));
+		if (!$data) return null;
+
+		return @unserialize(base64_decode($data));
 	}
 	
 	/**
 	 * Write to cache
 	 * @param string $name
 	 * @param mixed $data
-	 * @param string $setting (optional)
 	 * @return object $this
 	 */
-	public function write($name, $data, $setting = null) {
-		if ($setting == null) $setting = self::PathDefault;
-		
-		$fullPath = $this->fullPath($name, $setting);
+	public function write($name, $data, $expire = null) {
+		$fullPath = $this->fullPath($name);
 		$parts = pathinfo($fullPath);
 
 		if (!file_exists($parts['dirname']))
 			FileUtility::mkdir_p($parts['dirname']);
 
-		file_put_contents($fullPath, serialize($data));
+		file_put_contents($fullPath, base64_encode(serialize($data)));
 		return $this;
 	}
 	
@@ -88,18 +80,14 @@ class File implements CacheInterface {
 	 * @param string $path
 	 * @return string
 	 */
-	public function path($path = null) {
-		if ($path == null) $path = self::PathDefault;
-		
-		if (!$this->hasPath($path))
-			$path = self::PathDefault;
-		
-		// if the path doesn't exist attempt to create it
-		if (!file_exists($this->path[$path])) {
-			FileUtility::mkdir_p($this->path[$path], 0755);
+	public function path() {
+		$path = TMP_PATH . DS . 'cache';
+
+		if (!file_exists($path)) {
+			FileUtility::mkdir_p($path, 0755);
 		}
 		
-		return $this->path[$path];
+		return $path;
 	}
 	
 	/**
@@ -128,8 +116,8 @@ class File implements CacheInterface {
 	 * @param string $setting
 	 * @return string
 	 */
-	protected function fullPath($name, $setting = self::PathDefault) {
-		return $this->path($setting) . DS . $name;
+	protected function fullPath($name) {
+		return TMP_PATH . DS . 'cache' . DS . $name;
 	}
 	
 }
