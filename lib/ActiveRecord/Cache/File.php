@@ -41,13 +41,12 @@ class File implements CacheInterface {
 	/**
 	 * Read from cache
 	 * @param string $name
-	 * @param string $setting (optional)
 	 * @return mixed
 	 */
-	public function read($name, $setting = null) {
+	public function read($name) {
 		$data	= @file_get_contents($this->fullPath($name));
-		if (!$data) return false;
-		
+		if (!$data) return null;
+
 		return @unserialize(base64_decode($data));
 	}
 	
@@ -55,10 +54,9 @@ class File implements CacheInterface {
 	 * Write to cache
 	 * @param string $name
 	 * @param mixed $data
-	 * @param string $setting (optional)
 	 * @return object $this
 	 */
-	public function write($name, $data) {
+	public function write($name, $data, $expire = null) {
 		$fullPath = $this->fullPath($name);
 		$parts = pathinfo($fullPath);
 
@@ -74,8 +72,14 @@ class File implements CacheInterface {
 	 * @param string $path
 	 * @return string
 	 */
-	public function path() {	
-		return TMP_PATH . DS . 'cache';
+	public function path() {
+		$path = TMP_PATH . DS . 'cache';
+
+		if (!file_exists($path)) {
+			FileUtility::mkdir_p($path, 0755);
+		}
+		
+		return $path;
 	}
 	
 	/**
