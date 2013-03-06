@@ -5,35 +5,25 @@ namespace ActiveRecord\Cache;
 use ActiveRecord\Exceptions\CacheException;
 use ActiveRecord\Utility\File as FileUtility;
 
-class File implements CacheInterface {
+defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 
-	const PathDefault	= 'default';
-	
-	public $path= array();
-	
-	
-	
-	public function __construct() {
-		$this->addPath('default', TMP_PATH . DS . 'cache');
-	}
+class File implements CacheInterface {
 	
 	/**
 	 * Clear a cache
 	 * @param string $name
 	 * @param string $setting
 	 */
-	public function clear($name = null, $path = null) {
-		if ($path == null) $path = self::PathDefault;
-		
+	public function clear($name = null) {
 		if ($name) {
-			$filepath = $this->path($path) . DS . $name;
+			$filepath = $this->fullPath($name);
 			if (file_exists($filepath)) {
 				@unlink($filepath);
 			}
 			
 			return;
 		} else {
-			$this->flush($path);	
+			$this->flush();	
 		}
 	}
 	
@@ -41,8 +31,8 @@ class File implements CacheInterface {
 	 * Clear entire cache for path
 	 * @param string $path
 	 */
-	public function flush($path = null) {
-		$path = $this->path($path);
+	public function flush() {
+		$path = $this->path();
 		foreach (glob($path . DS . "*") as $filename) {
 			@unlink($filename);
 		}
@@ -55,12 +45,10 @@ class File implements CacheInterface {
 	 * @return mixed
 	 */
 	public function read($name, $setting = null) {
-		if ($setting == null) $setting = self::PathDefault;
-			
-		$data	= @file_get_contents($this->fullPath($name, $setting));
+		$data	= @file_get_contents($this->fullPath($name));
 		if (!$data) return false;
 		
-		return unserialize($data);
+		return @unserialize(base64_decode($data));
 	}
 	
 	/**
@@ -70,16 +58,14 @@ class File implements CacheInterface {
 	 * @param string $setting (optional)
 	 * @return object $this
 	 */
-	public function write($name, $data, $setting = null) {
-		if ($setting == null) $setting = self::PathDefault;
-		
-		$fullPath = $this->fullPath($name, $setting);
+	public function write($name, $data) {
+		$fullPath = $this->fullPath($name);
 		$parts = pathinfo($fullPath);
 
 		if (!file_exists($parts['dirname']))
 			FileUtility::mkdir_p($parts['dirname']);
 
-		file_put_contents($fullPath, serialize($data));
+		file_put_contents($fullPath, base64_encode(serialize($data)));
 		return $this;
 	}
 	
@@ -88,38 +74,8 @@ class File implements CacheInterface {
 	 * @param string $path
 	 * @return string
 	 */
-	public function path($path = null) {
-		if ($path == null) $path = self::PathDefault;
-		
-		if (!$this->hasPath($path))
-			$path = self::PathDefault;
-		
-		// if the path doesn't exist attempt to create it
-		if (!file_exists($this->path[$path])) {
-			FileUtility::mkdir_p($this->path[$path], 0755);
-		}
-		
-		return $this->path[$path];
-	}
-	
-	/**
-	 * Checks if a path exists
-	 * @param string $path
-	 * @return boolean
-	 */
-	public function hasPath($path) {
-		return isset($this->path[$path]);
-	}
-	
-	/**
-	 * Add a path
-	 * @param string $name
-	 * @param string $path
-	 * @return \Speedy\Cache
-	 */
-	public function addPath($name, $path) {
-		$this->path[$name]	= $path;
-		return $this;
+	public function path() {	
+		return TMP_PATH . DS . 'cache';
 	}
 	
 	/**
@@ -128,8 +84,8 @@ class File implements CacheInterface {
 	 * @param string $setting
 	 * @return string
 	 */
-	protected function fullPath($name, $setting = self::PathDefault) {
-		return $this->path($setting) . DS . $name;
+	protected function fullPath($name) {
+		return $this->path() . DS . $name;
 	}
 	
 }
