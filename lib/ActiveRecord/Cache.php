@@ -2,7 +2,6 @@
 namespace ActiveRecord;
 
 
-
 use Closure;
 use ActiveRecord\Inflector;
 
