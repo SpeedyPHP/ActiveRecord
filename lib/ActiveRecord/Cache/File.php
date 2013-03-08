@@ -4,6 +4,7 @@ namespace ActiveRecord\Cache;
 
 use ActiveRecord\Exceptions\CacheException;
 use ActiveRecord\Utility\File as FileUtility;
+use \SplFileObject;
 
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 
@@ -44,10 +45,24 @@ class File implements CacheInterface {
 	 * @return mixed
 	 */
 	public function read($name) {
-		$data	= @file_get_contents($this->fullPath($name));
-		if (!$data) return null;
+		\Speedy\Logger::debug("Read: $name");
+		$filePath = $this->fullPath($name);
+		if (!file_exists($filePath))
+			return null;
 
-		return @unserialize(base64_decode($data));
+		$data = '';
+		$file = new SplFileObject($filePath);
+		while(!$file->eof()) {
+			$data .= $file->current();
+			$file->next();
+		}
+		unset($file);
+
+		//$data	= @file_get_contents($this->fullPath($name));
+		if (empty($data)) return null;
+
+		//return @unserialize(base64_decode($data));*/
+		return null;
 	}
 	
 	/**
