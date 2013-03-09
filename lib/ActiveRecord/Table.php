@@ -60,6 +60,8 @@ class Table
 	 */
 	private $relationships = array();
 
+
+
 	public static function load($model_class_name)
 	{
 		if (!isset(self::$cache[$model_class_name]))

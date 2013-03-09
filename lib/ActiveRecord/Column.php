@@ -9,7 +9,7 @@ namespace ActiveRecord;
  *
  * @package ActiveRecord
  */
-class Column
+class Column implements \Serializable
 {
 	// types for $type
 	const STRING	= 1;
@@ -150,6 +150,27 @@ class Column
 			$this->type = self::STRING;
 
 		return $this->type;
+	}
+
+	public function serialize() {
+		return serialize(get_object_vars($this));
+	}
+
+	public function unserialize($string) {
+		$data = unserialize($string);
+
+		$this->name = $data['name'];
+		$this->inflected_name = $data['inflected_name'];
+		$this->type = $data['type'];
+		$this->raw_type = $data['raw_type'];
+		$this->length = $data['length'];
+		$this->nullable = $data['nullable'];
+		$this->pk = $data['pk'];
+		$this->default = $data['default'];
+		$this->auto_increment = $data['auto_increment'];
+		$this->sequence = $data['sequence'];
+
+		return $this;
 	}
 }
 ?>

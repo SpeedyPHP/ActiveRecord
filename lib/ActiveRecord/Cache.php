@@ -71,15 +71,20 @@ class Cache
 
 	public static function get($key, $closure)
 	{
-		$key = static::get_namespace() . $key;
+		$key = self::get_namespace() . $key;
 		
-		if (!static::$adapter)
+		if (!self::$adapter)
 			return $closure();
 
-		if (!($value = static::$adapter->read($key))) {
+		\Speedy\Logger::debug($key);
+		$value = self::$adapter->read($key);
+		\Speedy\Logger::debug($value);
+		\Speedy\Logger::debug(isset($value));
+		if (!isset($value)) {
 			$clean_name = str_replace('`', '', $key);
-			static::$adapter->write($clean_name,($value = $closure()),static::$options['expire']);
+			self::$adapter->write($clean_name,($value = $closure()),self::$options['expire']);
 		}
+		\Speedy\Logger::debug($value);
 
 		return $value;
 	}

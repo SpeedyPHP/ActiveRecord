@@ -437,7 +437,7 @@ class Model extends Object implements \ArrayAccess
 	public function __wakeup()
 	{
 		// make sure the models Table instance gets initialized when waking up
-		static::table();
+		//static::table();
 	}
 
 	/**
