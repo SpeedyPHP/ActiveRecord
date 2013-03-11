@@ -60,7 +60,6 @@ class File implements CacheInterface {
 	 * @return mixed
 	 */
 	public function read($name) {
-		\Speedy\Logger::debug("Read: $name");
 		$file = $this->file($name);
 		if (!isset($file))
 			return null;

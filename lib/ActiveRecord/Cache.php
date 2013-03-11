@@ -76,15 +76,11 @@ class Cache
 		if (!self::$adapter)
 			return $closure();
 
-		\Speedy\Logger::debug($key);
 		$value = self::$adapter->read($key);
-		\Speedy\Logger::debug($value);
-		\Speedy\Logger::debug(isset($value));
 		if (!isset($value)) {
 			$clean_name = str_replace('`', '', $key);
 			self::$adapter->write($clean_name,($value = $closure()),self::$options['expire']);
 		}
-		\Speedy\Logger::debug($value);
 
 		return $value;
 	}
