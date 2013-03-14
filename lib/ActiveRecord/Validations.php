@@ -493,6 +493,10 @@ class Validations
 
 			$attribute = $options[0];
 			$var = $this->model->$attribute;
+			if (!isset($var)) {
+				continue;
+			}
+			
 			if ($this->is_null_with_option($var, $options) || $this->is_blank_with_option($var, $options))
 				continue;
 			if ($range_options[0] == 'within' || $range_options[0] == 'in')

@@ -146,7 +146,7 @@ class Table
 					$alias = null;
 				}*/
 
-				$ret .= $rel->construct_inner_join_sql($this, false, $alias);
+				$ret .= $rel->construct_left_join_sql($this, false, $alias);
 			}
 			else
 				$ret .= $value;

@@ -412,6 +412,62 @@ abstract class Relationship implements InterfaceRelationship
 	}
 
 	/**
+	 * Creates LEFT JOIN SQL for associations.
+	 *
+	 * @param Table $from_table the table used for the FROM SQL statement
+	 * @param bool $using_through is this a THROUGH relationship?
+	 * @param string $alias a table alias for when a table is being joined twice
+	 * @return string SQL INNER JOIN fragment
+	 */
+	public function construct_left_join_sql(Table $from_table, $using_through=false, $alias=null)
+	{
+		if ($using_through)
+		{
+			$join_table = $from_table;
+			$join_table_name = $from_table->get_fully_qualified_table_name();
+			$from_table_name = Table::load($this->class_name)->get_fully_qualified_table_name();
+ 		}
+		else
+		{
+			$join_table = Table::load($this->class_name);
+			$join_table_name = $join_table->get_fully_qualified_table_name();
+			$from_table_name = $from_table->get_fully_qualified_table_name();
+		}
+
+		// need to flip the logic when the key is on the other table
+		if ($this instanceof HasMany || $this instanceof HasOne)
+		{
+			$this->set_keys($from_table->class->getName());
+
+			if ($using_through)
+			{
+				$foreign_key = $this->primary_key[0];
+				$join_primary_key = $this->foreign_key[0];
+			}
+			else
+			{
+				$join_primary_key = $this->foreign_key[0];
+				$foreign_key = $this->primary_key[0];
+			}
+		}
+		else
+		{
+			$foreign_key = $this->foreign_key[0];
+			$join_primary_key = $this->primary_key[0];
+		}
+
+		if (!is_null($alias))
+		{
+			$aliased_join_table_name = $alias = $this->get_table()->conn->quote_name($alias);
+			$alias = " AS $alias ";
+		}
+		else
+			$aliased_join_table_name = $join_table_name;
+
+		return "LEFT JOIN $join_table_name {$alias}ON ($from_table_name.$foreign_key = $aliased_join_table_name.$join_primary_key)";
+	}
+
+	/**
 	 * This will load the related model data.
 	 *
 	 * @param Model $model The model this relationship belongs to
