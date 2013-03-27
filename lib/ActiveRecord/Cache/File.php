@@ -148,8 +148,10 @@ class File implements CacheInterface {
 			return null;
 		}	
 
-		if (!file_exists($filePath))
+		if (!file_exists($filePath)) {
 			touch($filePath);
+			chmod($filePath, 0775);
+		}
 
 		$file	= new SplFileObject($filePath, 'r+');
 		$this->_files[$name] = $file;

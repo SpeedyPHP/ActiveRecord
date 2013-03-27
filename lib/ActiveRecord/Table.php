@@ -125,7 +125,7 @@ class Table
 		foreach ($joins as $value)
 		{
 			$ret .= $space;
-
+			
 			if (stripos($value,'JOIN ') === false)
 			{
 				if (!array_key_exists($value, $this->relationships))
