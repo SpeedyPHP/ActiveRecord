@@ -290,7 +290,7 @@ abstract class Migration {
 	 * @return string sql
 	 */
 	private function build_add_column($table_name, $column, $type, $length = null, $null = true) {
-		$this->column($column, $type, $length, $null);
+		$this->column($column, $type, ['length' => $length, 'null' => $null]);
 		
 		return "ALTER TABLE $table_name ADD COLUMN {$this->columns}";
 	}
