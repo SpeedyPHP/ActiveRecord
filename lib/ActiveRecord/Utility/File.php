@@ -1,5 +1,5 @@
 <?php
-namespace Speedy\Utility;
+namespace ActiveRecord\Utility;
 
 
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
