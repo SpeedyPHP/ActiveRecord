@@ -490,7 +490,7 @@ abstract class Connection
 	 */
 	public function datetime_to_string($datetime)
 	{
-		return $datetime->format('Y-m-d H:i:s T');
+		return $datetime->format('Y-m-d H:i:s');
 	}
 
 	/**
